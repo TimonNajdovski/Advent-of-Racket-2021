@@ -1,0 +1,55 @@
+#lang racket
+(require "common.rkt")
+
+(define (gamma lst)
+  (for/fold ([output ""])
+            ([i (range 12)])
+    (let
+        ([digits
+          (for/fold ([acc empty])
+                    ([arg lst])
+            (cons (substring arg i (+ i 1)) acc))])
+      
+    (if (>= (count (λ(x) (equal? x "1")) digits) (/ (length digits) 2))
+        (string-append output "1")
+        (string-append output "0")))))
+
+(define (epsilon lst)
+  (for/fold ([output ""])
+            ([i (range 12)])
+    (let
+        ([digits
+          (for/fold ([acc empty])
+                    ([arg lst])
+            (cons (substring arg i (+ i 1)) acc))])
+      
+    (if (< (count (λ(x) (equal? x "1")) digits) (/ (length digits) 2))
+        (string-append output "1")
+        (string-append output "0")))))
+
+(define (sfilter s1 s2 k)
+  (equal? (substring s1 k (+ k 1)) (substring s2 k (+ k 1))))
+
+
+(define (oxygen-gen lst)
+  (for/fold ([acc lst]
+             #:result (first acc))
+            ([i (range 12)])
+    (if (equal? (length acc) 1)
+        acc
+        (filter (λ(x) (sfilter x (gamma acc) i)) acc))))
+
+
+(define (co2-scrub lst)
+  (for/fold ([acc lst]
+             #:result (first acc))
+            ([i (range 12)])
+    (if (equal? (length acc) 1)
+        acc
+        (filter (λ(x) (sfilter x (epsilon acc) i)) acc))))
+
+
+(define (bin-multiply x y)
+  (* (binstr->integer x) (binstr->integer y)))
+
+(bin-multiply (oxygen-gen (open-day 3)) (co2-scrub (open-day 3)))

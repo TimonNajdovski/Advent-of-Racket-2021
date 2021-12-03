@@ -1,0 +1,5 @@
+#lang racket
+
+(define (open day n)
+  (let [(day-filename (format "day_~a.in"))]
+    (file->list day-filename)))
